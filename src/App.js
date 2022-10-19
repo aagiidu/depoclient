@@ -5,7 +5,7 @@ import axios from 'axios'
 
 export default function App() {
 
-  const SOCKET_URI = 'http://localhost:5000';
+  const SOCKET_URI = 'http://157.245.151.65:5000';
 
   const [successList, setSuccessList] = useState([]);
   const [failedList, setFailedList] = useState([]);
@@ -64,7 +64,7 @@ export default function App() {
   const deleteMsg = async (id) => {
     const c = window.confirm('Устгахдаа итгэлтэй байна уу?');
     if(c){
-      const res = await axios.post(`http://localhost:5000/api/delete`, {id});
+      const res = await axios.post(`http://157.245.151.65:5000/api/delete`, {id});
       if(res.data.msg === 'success'){
         const list = failedList.filter(m => m._id !== id)
         console.log('after delete', list)
@@ -83,14 +83,14 @@ export default function App() {
     e.preventDefault();
     const txt = e.target.searchvalue ? e.target.searchvalue.value : '';
     if(!txt || txt.length < 2) return false;
-    const res = await axios.post(`http://localhost:5000/api/search`, {username: txt});
+    const res = await axios.post(`http://157.245.151.65:5000/api/search`, {username: txt});
     if(res.data.msg === 'success'){
       setSearchList(res.data.searchList)
     }
   }
 
   const refresList = async () => {
-    await axios.get(`http://localhost:5000/api/refresh`);
+    await axios.get(`http://157.245.151.65:5000/api/refresh`);
   }
 
   const clearSearch = () => {

@@ -14,6 +14,7 @@ export default function App() {
   const [loggedIn, setLoggedId] = useState(false)
   const [searching, setSearching] = useState(false)
   const [username, setUsername] = useState('')
+  const [activeList, setActiveList] = useState(1)
   const room = "Javascript";
   let search = false;
   // let setup = false;
@@ -106,22 +107,35 @@ export default function App() {
     setSearching(true)
   }
 
+  const showFailed = () => {
+    setActiveList(1)
+  }
+
+  const showSuccess = () => {
+    setActiveList(2)
+  }
+
+  const deleteAll = async () => {
+    const c = window.confirm('Бүгдийг нь устгахдаа итгэлтэй байна уу?');
+    if(c){
+      const res = await axios.post(`http://157.245.151.65:5000/api/delete/success`, {token: '4523bbb27f114137a4169da1c5e7fda0'});
+    }
+  }
+
   const ListPage = () => {
     return (
       <div className='container'>
-        <div className='row mb-1'>
-          <div className='col-sm-6'>
-            <button type="button" className="btn btn-primary btn-sm px-5" onClick={openSearch}>
-              Хайх
-            </button>
-          </div>
-          <div className='col-sm-6'>
-            <p>
-              <button type='button' className='btn btn-success btn-sm float-right px-5' onClick={logout}>Logout</button>
-            </p>
-          </div>
+        <div className='mb-1'>
+          
+            <div className='row d-flex justify-content-between top-bar'>
+              <button type="button" className="btn btn-primary btn-sm" onClick={openSearch}>Хайх</button>
+              <button type='button' className='btn btn-success btn-sm' onClick={refresList}>Refresh</button>
+              <button type='button' className='btn btn-danger btn-sm float-right' onClick={deleteAll}>DeleteAll</button>
+              <button type='button' className='btn btn-danger btn-sm float-right' onClick={logout}>Logout</button>
+            </div>
+
         </div>
-        <div className='row'>
+        <div className='row web'>
           <div className='col-sm-6 thin-scroll'>
             <div className='msgcol'>
               {
@@ -134,6 +148,24 @@ export default function App() {
               {
                 successList.map(m => <MessageTile msg={m} key={m._id} onDelete={deleteMsg} />)
               }
+            </div>
+          </div>
+        </div>
+        <div className='row phone'>
+          <div className='col-sm-12 thin-scroll'>
+            <div className='msgcol'>
+              {
+                activeList === 1 && failedList.map(m => <MessageTile msg={m} key={m._id} onDelete={deleteMsg} />)
+              }
+              {
+                activeList === 2 && successList.map(m => <MessageTile msg={m} key={m._id} onDelete={deleteMsg} />)
+              }
+            </div>
+          </div>
+          <div className='col-sm-12'>
+            <div className='row bottom-bar d-flex justify-content-between'>
+              <button type='button' className='btn btn-danger btn-sm' onClick={showFailed}>Алдаатай</button>
+              <button type='button' className='btn btn-success btn-sm' onClick={showSuccess}>Амжилттай</button>
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@ import axios from 'axios'
 
 export default function App() {
 
-  const SOCKET_URI = 'http://157.245.151.65:5000';
+  const SOCKET_URI = 'http://localhost:5000'; // 'http://157.245.151.65:5000';
 
   const [successList, setSuccessList] = useState([]);
   const [failedList, setFailedList] = useState([]);
@@ -16,6 +16,7 @@ export default function App() {
   const [username, setUsername] = useState('')
   const [activeList, setActiveList] = useState(1)
   const room = "Javascript";
+  const serverUrl = 'http://localhost:5000'; // 'http://157.245.151.65:5000';
   let search = false;
   // let setup = false;
   useEffect(() => {
@@ -65,7 +66,7 @@ export default function App() {
   const deleteMsg = async (id) => {
     const c = window.confirm('Устгахдаа итгэлтэй байна уу?');
     if(c){
-      const res = await axios.post(`http://157.245.151.65:5000/api/delete`, {id});
+      const res = await axios.post(`${serverUrl}/api/delete`, {id});
       if(res.data.msg === 'success'){
         const list = failedList.filter(m => m._id !== id)
         console.log('after delete', list)
@@ -84,14 +85,26 @@ export default function App() {
     e.preventDefault();
     const txt = e.target.searchvalue ? e.target.searchvalue.value : '';
     if(!txt || txt.length < 2) return false;
-    const res = await axios.post(`http://157.245.151.65:5000/api/search`, {username: txt});
+    const res = await axios.post(`${serverUrl}/api/search`, {username: txt});
     if(res.data.msg === 'success'){
       setSearchList(res.data.searchList)
     }
   }
 
+  const getByTime = async (h) => {
+    const range = h * 3600000
+    setSearchList([])
+    const now = new Date()
+    const end = now.getTime()
+    const start = end - range
+    const res = await axios.get(`${serverUrl}/api/report/${start}/${end}`);
+    if(res.data.msg === 'success'){
+      setSearchList(res.data.messages)
+    }
+  }
+
   const refresList = async () => {
-    await axios.get(`http://157.245.151.65:5000/api/refresh`);
+    await axios.get(`${serverUrl}/api/refresh`);
   }
 
   const clearSearch = () => {
@@ -118,7 +131,7 @@ export default function App() {
   const deleteAll = async () => {
     const c = window.confirm('Бүгдийг нь устгахдаа итгэлтэй байна уу?');
     if(c){
-      const res = await axios.post(`http://157.245.151.65:5000/api/delete/success`, {token: '4523bbb27f114137a4169da1c5e7fda0'});
+      const res = await axios.post(`${serverUrl}/api/delete/success`, {token: '4523bbb27f114137a4169da1c5e7fda0'});
     }
   }
 
@@ -175,22 +188,34 @@ export default function App() {
 
   const SearchPage = () => {
     return (
-      <div className='container' style={{maxWidth: '500px', margin: 'auto'}}>
-        <form onSubmit={searchMsg}>
-          <div className="input-group">
-            <div className="input-group-prepend">
-              <button className="btn btn-secondary" type="button" onClick={clearSearch}>Буцах</button>
-            </div>
-            <input type="text" className="form-control" name='searchvalue' placeholder="Хайлт..." />
-            <div className="input-group-append">
-              <button className="btn btn-success" type="submit">Хайх</button>
-            </div>
+      <div className='container'>
+        <div className='row'>
+          <div className='col-sm-5'>
+            <form onSubmit={searchMsg}>
+              <div className="input-group">
+                <div className="input-group-prepend">
+                  <button className="btn btn-secondary" type="button" onClick={clearSearch}>Буцах</button>
+                </div>
+                <input type="text" className="form-control" name='searchvalue' placeholder="Хэрэглэгчийн нэр..." />
+                <div className="input-group-append">
+                  <button className="btn btn-success" type="submit">Нэрээр хайх</button>
+                </div>
+              </div>
+            </form>
           </div>
-        </form>
-        <div className='thin-scroll'>
+          <div className='col-sm-7'>
+            <button className="btn btn-success" type="button" onClick={() => getByTime(1)}>1 цаг</button>
+            <button className="btn btn-success" type="button" onClick={() => getByTime(2)}>2 цаг</button>  
+            <button className="btn btn-success" type="button" onClick={() => getByTime(3)}>3 цаг</button>  
+            <button className="btn btn-success" type="button" onClick={() => getByTime(4)}>4 цаг</button>  
+            <button className="btn btn-success" type="button" onClick={() => getByTime(5)}>5 цаг</button>  
+          </div>
+        </div>
+        
+        <div className='thin-scroll' style={{maxWidth: '500px', margin: 'auto'}}>
           <div className='msgcol msgcol2'>
             {
-              searchList.map(m => <MessageTile msg={m} key={m._id} onDelete={deleteMsg} />)
+              searchList && searchList.map(m => <MessageTile msg={m} key={m._id} onDelete={deleteMsg} />)
             }
           </div>
         </div>

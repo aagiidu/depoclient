@@ -5,7 +5,7 @@ import axios from 'axios'
 
 export default function App() {
 
-  const SOCKET_URI = 'http://localhost:5000'; // 'http://157.245.151.65:5000';
+  const SOCKET_URI = 'https://autodepositor.com'; // 'https://autodepositor.com/'; // 'http://localhost:5000'; // 'http://157.245.151.65:5000';
 
   const [successList, setSuccessList] = useState([]);
   const [failedList, setFailedList] = useState([]);
@@ -16,7 +16,7 @@ export default function App() {
   const [username, setUsername] = useState('')
   const [activeList, setActiveList] = useState(1)
   const room = "Javascript";
-  const serverUrl = 'http://localhost:5000'; // 'http://157.245.151.65:5000';
+  const serverUrl = 'https://autodepositor.com'; // 'https://autodepositor.com:5000'; //  'http://localhost:5000'; // 'http://157.245.151.65:5000';
   let search = false;
   // let setup = false;
   useEffect(() => {
@@ -264,7 +264,7 @@ function MessageTile(props){
   return (
     <div className={'alert p-2 mb-1 alert-' + (msg.status === 1 ? 'danger' : 'success')}>
       {msg.status === 1 && <button type="button" className="close" onClick={() => onDelete(msg._id)}>&times;</button>}
-      <h6 className='title'>{date}</h6>
+      <h6 className='title'>{msg.sender !== 'onepoker' ? 'PokerTime' : 'OnePoker'}: {date}</h6>
       <p>{msg.body}</p>
       <p>Хэрэглэгч: <span className='font-weight-bold'>{msg.username}</span> 
         <span className='float-right'>Дүн: <span className='font-weight-bold'>₮{numberFormat(msg.amount)}</span></span> 
